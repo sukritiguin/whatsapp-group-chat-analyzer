@@ -219,3 +219,6 @@ def get_word_cloud(df):
     # # plt.show()
     # # return tls.mpl_to_plotly(plt)
     # plt.close()
+
+
+

@@ -83,3 +83,6 @@ def get_emoji_df(df):
     emoji_df = pd.DataFrame.from_dict(emoji_map,orient='index').reset_index()
     emoji_df = emoji_df.rename(columns={"index":"emoji",0:"count"})
     return emoji_df
+
+
+

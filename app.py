@@ -303,5 +303,7 @@ def update_chart(input_value):
     print("Generated")
     return temp
 
+
+
 if __name__ == '__main__':
     app.run_server(debug=True)
