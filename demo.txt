@@ -1,5 +1,0 @@
-id, name, roll
-1, sukriti, 33
-2, suyeta, 17
-3, Bhallu, 0017
-4, Lalu, 0033
