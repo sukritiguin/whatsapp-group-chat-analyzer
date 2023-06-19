@@ -88,6 +88,10 @@ def f12(chat, day_ind=1, month_ind=2, year_ind=3):
     df.dropna(inplace=True)
     df = df[df['date'] != '00/00/0000']
     df['date'] = pd.to_datetime(df['date'], format='%d/%m/%Y')
+    # df.to_json('data12.json', orient='records')
+    print(df)
+    print(df.columns)
+    print(df.dtypes)
 
     return df
 
@@ -221,5 +225,146 @@ def f24(chat, day_ind=2, month_ind=1, year_ind=3):
 
     df = df[df['date'] != '00/00/0000']
     df['date'] = pd.to_datetime(df['date'], format='%d/%m/%Y')
+
+    print(df)
+    print(df.columns)
+
+    return df
+
+
+def ff12(data, date_format):
+    first = 0
+    second = 1
+    message_list = []
+    pattern = '(((\d{1,4}\/\d{1,4}\/\d{1,4}), (\d{1,2}:\d{1,2})\\u202f([ap]m)) - ([^:]+): )'
+    matches = list(re.finditer(pattern, data))
+    while (second <= len(matches)):
+        current_group = matches[first]
+        if (second < len(matches)):
+            next_group = matches[second]
+        date = current_group[3]
+        time = current_group[4]
+        am_or_pm = current_group[5]
+        contact = current_group[6]
+        if (second < len(matches)):
+            message = data[current_group.end(): next_group.start()]
+        else:
+            message = data[current_group.end():]
+        message_list.append({
+            'date': date,
+            'time': time,
+            'am_or_pm': am_or_pm,
+            'user': contact,
+            'message': message
+        })
+        first += 1
+        second += 1
+
+    df = pd.DataFrame(message_list)
+
+    given_date_format = '%d/%m/%Y'
+
+    if date_format == 'dd/mm/yy':
+        given_date_format = '%d/%m/%y'
+    elif date_format == 'dd/mm/YYYY':
+        given_date_format = '%d/%m/%Y'
+    elif date_format == 'mm/dd/yy':
+        given_date_format = '%m/%d/%y'
+    elif date_format == 'mm/dd/YYYY':
+        given_date_format = '%m/%d/%Y'
+    elif date_format == 'yy/mm/dd':
+        given_date_format = '%y/%m/%d'
+    elif date_format == 'YYYY/mm/dd':
+        given_date_format = '%Y/%m/%d'
+    elif date_format == 'dd-mm-yy':
+        given_date_format = '%d-%m-%y'
+    elif date_format == 'dd-mm-YYYY':
+        given_date_format = '%d-%m-%Y'
+    elif date_format == 'mm-dd-yy':
+        given_date_format = '%m-%d-%y'
+    elif date_format == 'mm-dd-YYYY':
+        given_date_format = '%m-%d-%Y'
+    elif date_format == 'yy-mm-dd':
+        given_date_format = '%y-%m-%d'
+    elif date_format == 'YYYY-mm-dd':
+        given_date_format = '%Y-%m-%d'
+
+    df['time'] = pd.to_datetime(df['time'] + ' ' + df['am_or_pm'], format='%I:%M %p').dt.strftime('%H:%M')
+    # Convert date to datetime format
+    df['date'] = pd.to_datetime(df['date'], format=given_date_format)
+
+    df['day'] = df['date'].dt.day.astype(str)
+    df['year'] = df['date'].dt.year.astype(str)
+    df['month'] = df['date'].dt.strftime('%B')
+
+    df = df[['date', 'time', 'user', 'message', 'day', 'year', 'month']]
+
+    print(df)
+
+    return df
+
+
+def ff24(data, date_format=""):
+    first = 0
+    second = 1
+    message_list = []
+    pattern = '((\d{1,4}\/\d{1,4}\/\d{1,4}), (\d{1,2}:\d{1,2}) - ([^:]+): )'
+    matches = list(re.finditer(pattern, data))
+    while (second <= len(matches)):
+        current_group = matches[first]
+        if (second < len(matches)):
+            next_group = matches[second]
+        date = current_group[2]
+        time = current_group[3]
+        contact = current_group[4]
+        if (second < len(matches)):
+            message = data[current_group.end(): next_group.start()]
+        else:
+            message = data[current_group.end():]
+        message_list.append({
+            'date': date,
+            'time': time,
+            'user': contact,
+            'message': message
+        })
+        first += 1
+        second += 1
+
+    df = pd.DataFrame(message_list)
+
+    given_date_format = '%d/%m/%Y'
+
+    if date_format == 'dd/mm/yy':
+        given_date_format = '%d/%m/%y'
+    elif date_format == 'dd/mm/YYYY':
+        given_date_format = '%d/%m/%Y'
+    elif date_format == 'mm/dd/yy':
+        given_date_format = '%m/%d/%y'
+    elif date_format == 'mm/dd/YYYY':
+        given_date_format = '%m/%d/%Y'
+    elif date_format == 'yy/mm/dd':
+        given_date_format = '%y/%m/%d'
+    elif date_format == 'YYYY/mm/dd':
+        given_date_format = '%Y/%m/%d'
+    elif date_format == 'dd-mm-yy':
+        given_date_format = '%d-%m-%y'
+    elif date_format == 'dd-mm-YYYY':
+        given_date_format = '%d-%m-%Y'
+    elif date_format == 'mm-dd-yy':
+        given_date_format = '%m-%d-%y'
+    elif date_format == 'mm-dd-YYYY':
+        given_date_format = '%m-%d-%Y'
+    elif date_format == 'yy-mm-dd':
+        given_date_format = '%y-%m-%d'
+    elif date_format == 'YYYY-mm-dd':
+        given_date_format = '%Y-%m-%d'
+
+    df['date'] = pd.to_datetime(df['date'], format=given_date_format)
+    df['time'] = df['time'].astype(str)
+    df['user'] = df['user'].str.split('(').str[0].str.strip()
+    df['message'] = df['message'].astype(str)
+    df['day'] = df['date'].dt.day.astype(str)
+    df['year'] = df['date'].dt.year.astype(str)
+    df['month'] = df['date'].dt.strftime('%B')
 
     return df

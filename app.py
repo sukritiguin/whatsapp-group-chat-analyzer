@@ -45,10 +45,22 @@ app.layout = html.Div([
         dcc.RadioItems(
             id='date-format',
             options=[
-                {'label': 'dd/mm/yyyy', 'value': '123'},
-                {'label': 'mm/dd/yyyy', 'value': '213'}
+                # {'label': 'dd/mm/yyyy', 'value': '123'},
+                # {'label': 'mm/dd/yyyy', 'value': '213'},
+                {'label': 'dd/mm/yy', 'value': 'dd/mm/yy'},
+                {'label': 'dd/mm/yyyy', 'value': 'dd/mm/YYYY'},
+                {'label': 'mm/dd/yy', 'value': 'mm/dd/yy'},
+                {'label': 'mm/dd/yyyy', 'value': 'mm/dd/YYYY'},
+                {'label': 'yy/mm/dd', 'value': 'yy/mm/dd'},
+                {'label': 'yyyy/mm/dd', 'value': 'yyyy/mm/dd'},
+                {'label': 'dd-mm-yy', 'value': 'dd-mm-yy'},
+                {'label': 'dd-mm-yyyy', 'value': 'dd-mm-YYYY'},
+                {'label': 'mm-dd-yy', 'value': 'mm-dd-yy'},
+                {'label': 'mm-dd-yyyy', 'value': 'mm-dd-YYYY'},
+                {'label': 'yy-mm-dd', 'value': 'yy-mm-dd'},
+                {'label': 'yyyy-mm-dd', 'value': 'YYYY-mm-dd'}
             ],
-            value='123',
+            value='dd/mm/yyyy',
             labelStyle={'display': 'inline-block', 'margin': '10px'}
         ),
         html.Label('Select time format:'),
@@ -177,16 +189,18 @@ def update_output(contents, filename, date_format, time_format):
 
         file_content = contents.encode("utf8").split(b";base64,")[1]
         decoded = base64.decodebytes(file_content).decode('utf-8')
+        # print(decoded)
         lines = decoded.splitlines()
 
         df = pd.DataFrame()
         try:
             if 'txt' in filename:
                 if time_format=="12hr":
-                    df = preprocessing.f12(lines,day_ind=int(date_format[0]),month_ind=int(date_format[1]),year_ind=int(date_format[2]))
+                    # df = preprocessing.f12(lines,day_ind=int(date_format[0]),month_ind=int(date_format[1]),year_ind=int(date_format[2]))
+                    df = preprocessing.ff12(data=decoded, date_format=date_format)
                 else:
-                    df = preprocessing.f24(lines, day_ind=int(date_format[0]), month_ind=int(date_format[1]),
-                                           year_ind=int(date_format[2]))
+                    # df = preprocessing.f24(lines, day_ind=int(date_format[0]), month_ind=int(date_format[1]), year_ind=int(date_format[2]))
+                    df = preprocessing.ff24(data=decoded, date_format=date_format)
                 global chat_df
                 chat_df = df
         except Exception as e:
@@ -302,6 +316,43 @@ def update_chart(input_value):
     ])
     print("Generated")
     return temp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
