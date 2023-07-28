@@ -19,6 +19,7 @@ chat_df = None
 import preprocessing
 
 app = dash.Dash(__name__)
+server = app.server
 
 app.layout = html.Div([
     html.Div("Select Date and Time formar first then upload chat"),
