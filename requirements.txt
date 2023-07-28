@@ -17,4 +17,4 @@ plotly
 numpy
 streamlit
 wordcloud
-guicorn
+guicorn~=2.0.2
