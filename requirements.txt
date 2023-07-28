@@ -10,7 +10,7 @@ tornado~=6.2
 Jinja2~=3.1.2
 setuptools~=58.1.0
 Cython~=0.29.28
-matplotlib~=3.6.0
+matplotlib
 dash~=2.8.1
 pandas~=1.4.4
 plotly~=5.13.1
